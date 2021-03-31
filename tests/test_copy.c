@@ -29,6 +29,7 @@ int main (void) {
     if (write_bmp3(&image, SUBDIR)) {
         errors++;
     }
+    free_bmp3(&image);
     // diff test_copy_out/detmer.bmp ../images/detmer.bmp
 
     puts("");
@@ -38,6 +39,7 @@ int main (void) {
     if (write_bmp3(&image, SUBDIR)) {
         errors++;
     }
+    free_bmp3(&image);
     // diff test_copy_out/georgiou.bmp ../images/georgiou.bmp
     // cmp -l test_copy_out/georgiou.bmp ../images/georgiou.bmp | gawk '{printf "%08X %02X %02X\n", $1, strtonum(0$2), strtonum(0$3)}'
 
@@ -48,6 +50,7 @@ int main (void) {
     if (write_bmp3(&image, SUBDIR)) {
         errors++;
     }
+    free_bmp3(&image);
     // diff test_copy_out/burnham_spock.bmp ../images/burnham_spock.bmp
 
     puts("");
@@ -57,6 +60,7 @@ int main (void) {
     if (write_bmp3(&image, SUBDIR)) {
         errors++;
     }
+    free_bmp3(&image);
     // diff test_copy_out/landscape1.bmp ../images/landscape1.bmp
 
     puts("");
@@ -66,6 +70,7 @@ int main (void) {
     if (write_bmp3(&image, SUBDIR)) {
         errors++;
     }
+    free_bmp3(&image);
     // diff test_copy_out/landscape2.bmp ../images/landscape2.bmp
 
     puts("");
@@ -75,6 +80,7 @@ int main (void) {
     if (write_bmp3(&image, SUBDIR)) {
         errors++;
     }
+    free_bmp3(&image);
     // diff test_copy_out/landscape3.bmp ../images/landscape3.bmp
 
     puts("");
@@ -84,6 +90,7 @@ int main (void) {
     if (write_bmp3(&image, SUBDIR)) {
         errors++;
     }
+    free_bmp3(&image);
     // diff test_copy_out/USS_Ent.bmp ../images/USS_Ent.bmp
 
     return errors;

@@ -63,12 +63,12 @@ typedef struct {
     unsigned pixel_count;       // number of pixel in the matrix
 } bmp3_image;
 
+/* Colors names and array of pixels */
 enum color {
     BLACK,
     WHITE,
     COLOR_COUNT
 };
-
 extern const pixel colors[COLOR_COUNT];
 
 /**

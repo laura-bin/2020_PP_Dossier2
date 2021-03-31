@@ -30,6 +30,7 @@ int main (void) {
         errors++;
     }
     print_bmp3_info(&image);
+    free_bmp3(&image);
     
     puts("");
     if (create_bmp3(&image, "test_landscape_black_2", 41, 30)) {
@@ -39,6 +40,7 @@ int main (void) {
         errors++;
     }
     print_bmp3_info(&image);
+    free_bmp3(&image);
     
     puts("");
     if (create_bmp3(&image, "test_landscape_black_3", 42, 30)) {
@@ -48,6 +50,7 @@ int main (void) {
         errors++;
     }
     print_bmp3_info(&image);
+    free_bmp3(&image);
     
     puts("");
     if (create_bmp3(&image, "test_landscape_black_4", 43, 30)) {
@@ -57,6 +60,7 @@ int main (void) {
         errors++;
     }
     print_bmp3_info(&image);
+    free_bmp3(&image);
     
     puts("");
     if (create_bmp3(&image, "test_portrait_white", 30, 40)) {
@@ -67,6 +71,7 @@ int main (void) {
         errors++;
     }
     print_bmp3_info(&image);
+    free_bmp3(&image);
 
     return errors;
 }
