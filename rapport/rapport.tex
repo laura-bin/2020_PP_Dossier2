@@ -90,7 +90,7 @@
     \paragraph{}
     La fonction \texttt{print\_bmp3\_info} permet d'afficher les métadonnées d'une image chargée en mémoire. Cette fonction permet de vérifier la conformité des données chargées avec l'image source. Elle permet également de vérifier l'intégrité des données chargées avec celles du fichier bitmap en ouvrant ce fichier dans un éditeur hexadécimal.
 
-    \subsubsection{Ecriture d'une image}
+    \subsubsection{Écriture d'une image}
     \paragraph{}
     La fonction \texttt{write\_bmp3} écrit une image en mémoire dans un nouveau fichier (ou en écrasant le fichier existant s'il y en avait un). Comme la fonction de chargement, elle tient compte du padding des lignes du fichier bitmap.
 
@@ -113,7 +113,7 @@
     \newpage
     \section{Tests}
     \paragraph{}
-    Les tests sont implémentés dans le dossier \emph{tests} sous forme de routines appelant les différentes fonctions utilisées par le programme. Ils sont compilés en fichiers exécutables par un \emph{Makefile} généré par \emph{cmake}. La commande \texttt{cmake ..}\footnote{Pour ajouter des informations sur le code source lors du développement, j'utilise la commande \texttt{cmake -DCMAKE\_C\_FLAGS=-g ..} qui permet de remonter les erreurs plus facilement avec \emph{gdb}. Pour la version finiale, j'utilise la commande \texttt{cmake -DCMAKE\_BUILD\_TYPE=Release ..}} lancée depuis le répertoire \emph{build} génère le \emph{Makefile}. La commande \texttt{make} lancée depuis ce même répertoire génère les différents exécutables.
+    Les tests sont implémentés dans le dossier \emph{tests} sous forme de routines appelant les différentes fonctions utilisées par le programme. Ils sont compilés en fichiers exécutables par un \emph{Makefile} généré par \emph{cmake}. La commande \texttt{cmake ..}\footnote{Pour ajouter des informations sur le code source lors du développement, j'utilise la commande \texttt{cmake -DCMAKE\_C\_FLAGS=-g ..} qui permet de remonter les erreurs plus facilement avec \emph{gdb}. Pour la version finale, j'utilise la commande \texttt{cmake -DCMAKE\_BUILD\_TYPE=Release ..}} lancée depuis le répertoire \emph{build} génère le \emph{Makefile}. La commande \texttt{make} lancée depuis ce même répertoire génère les différents exécutables.
 
 
     \subsection{Chargement d'une image}
