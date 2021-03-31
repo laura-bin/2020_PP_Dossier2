@@ -76,6 +76,7 @@ void free_pixel_matrix(bmp3_image *img) {
 int load_bmp3(char *name, char *dir, bmp3_image *out_image) {
     char file_path[255];    // bitmap file path
     FILE *bmp_file = NULL;  // bitmap file pointer
+    long line_offset;       // line buffer
     size_t line_length;     // line length (multiple of 4)
     int i;                  // line index
 
@@ -119,12 +120,15 @@ int load_bmp3(char *name, char *dir, bmp3_image *out_image) {
     }
 
     // load the pixel matrix
+    line_offset = BMP3_IMAGE_OFFSET;
     line_length = 3 * out_image->header.width + out_image->header.width % 4;
     for (i = 0; i < out_image->header.height; i++) {
-        if (fread(out_image->matrix[i],line_length, 1, bmp_file) != 1) {
+        fseek(bmp_file, line_offset, SEEK_SET);
+        if (fread(out_image->matrix[i], 3 * out_image->header.width, 1, bmp_file) != 1) {
             printf("error on reading line %d\n", i);
             return -1;
         }
+        line_offset += line_length;
     }
 
     fclose(bmp_file);
@@ -158,6 +162,7 @@ void print_bmp3_info(bmp3_image *image) {
 int write_bmp3(bmp3_image *image, char *dir) {
     char file_path[255];    // bitmap file path
     FILE *bmp_file = NULL;  // bitmap file pointer
+    pixel *line;            // line buffer
     size_t line_length;     // line length (multiple of 4)
     int i;                  // line index
 
@@ -190,13 +195,16 @@ int write_bmp3(bmp3_image *image, char *dir) {
 
     // write the pixel matrix
     line_length = 3 * image->header.width + image->header.width % 4;
+    line = malloc(line_length);
     for (i = 0; i < image->header.height; i++) {
-        if (fwrite(image->matrix[i], line_length, 1, bmp_file) != 1) {
+        memset(line, 0, line_length);
+        memcpy(line, image->matrix[i], 3 * image->header.width);
+        if (fwrite(line, line_length, 1, bmp_file) != 1) {
             printf("error on writing line %d\n", i);
             return -1;
         }
     }
-
+    free(line);
     fclose(bmp_file);
     printf("success\n");
     return 0;
