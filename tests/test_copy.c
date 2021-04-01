@@ -14,84 +14,40 @@
 #include "bmp_file.h"
 #include "utils.h"
 
-#define SUBDIR  "test_copy_out"
+#define SOURCE_DIR  "images"                // source directory
+#define DEST_DIR    "test_copy_out"         // destination directory
+
+int failures = 0;
+
+// diff test_copy_out/tested.bmp ../images/tested.bmp
+// cmp -l test_copy_out/tested.bmp ../images/tested.bmp | gawk '{printf "%08X %02X %02X\n", $1, strtonum(0$2), strtonum(0$3)}'
+void test(char **tests, unsigned n) {
+    bmp3_image source;
+    unsigned i;
+
+    puts("");
+
+    for (i = 0; i < n; i++) {
+        // load the image from the source directory
+        if (load_bmp3(tests[i], ".." DIR_SEP SOURCE_DIR, &source)) {
+            failures++;
+            continue;
+        }
+
+        // write the image in the destination directory
+        if (write_bmp3(&source, DEST_DIR)) {
+            failures++;
+        }
+        free_bmp3(&source);
+    }
+}
 
 int main (void) {
-    bmp3_image image;
-    int errors = 0;
 
-    make_sub_dir(SUBDIR);
+    make_sub_dir(DEST_DIR);
 
-    puts("");
-    if (load_bmp3("detmer", ".." DIR_SEP "images", &image)) {
-        errors++;
-    }
-    if (write_bmp3(&image, SUBDIR)) {
-        errors++;
-    }
-    free_bmp3(&image);
-    // diff test_copy_out/detmer.bmp ../images/detmer.bmp
+    test((char*[]){ "detmer", "georgiou", "burnham_spock",
+            "landscape1", "landscape2", "landscape3"}, 6);
 
-    puts("");
-    if (load_bmp3("georgiou", ".." DIR_SEP "images", &image)) {
-        errors++;
-    }
-    if (write_bmp3(&image, SUBDIR)) {
-        errors++;
-    }
-    free_bmp3(&image);
-    // diff test_copy_out/georgiou.bmp ../images/georgiou.bmp
-    // cmp -l test_copy_out/georgiou.bmp ../images/georgiou.bmp | gawk '{printf "%08X %02X %02X\n", $1, strtonum(0$2), strtonum(0$3)}'
-
-    puts("");
-    if (load_bmp3("burnham_spock", ".." DIR_SEP "images", &image)) {
-        errors++;
-    }
-    if (write_bmp3(&image, SUBDIR)) {
-        errors++;
-    }
-    free_bmp3(&image);
-    // diff test_copy_out/burnham_spock.bmp ../images/burnham_spock.bmp
-
-    puts("");
-    if (load_bmp3("landscape1", ".." DIR_SEP "images", &image)) {
-        errors++;
-    }
-    if (write_bmp3(&image, SUBDIR)) {
-        errors++;
-    }
-    free_bmp3(&image);
-    // diff test_copy_out/landscape1.bmp ../images/landscape1.bmp
-
-    puts("");
-    if (load_bmp3("landscape2", ".." DIR_SEP "images", &image)) {
-        errors++;
-    }
-    if (write_bmp3(&image, SUBDIR)) {
-        errors++;
-    }
-    free_bmp3(&image);
-    // diff test_copy_out/landscape2.bmp ../images/landscape2.bmp
-
-    puts("");
-    if (load_bmp3("landscape3", ".." DIR_SEP "images", &image)) {
-        errors++;
-    }
-    if (write_bmp3(&image, SUBDIR)) {
-        errors++;
-    }
-    free_bmp3(&image);
-    // diff test_copy_out/landscape3.bmp ../images/landscape3.bmp
-
-    puts("");
-    if (load_bmp3("USS_Ent", ".." DIR_SEP "images", &image)) {
-        errors++;
-    }
-    if (write_bmp3(&image, SUBDIR)) {
-        errors++;
-    }
-    free_bmp3(&image);
-    // diff test_copy_out/USS_Ent.bmp ../images/USS_Ent.bmp
-
-    return errors;
+    return failures;
 }
