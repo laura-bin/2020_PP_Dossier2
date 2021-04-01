@@ -22,7 +22,9 @@
  ****************************************************************************************/
 
 #define BMP3_BPP            24      // BMP3 bit per pixel
-#define BMP3_IMAGE_OFFSET   54      // BMP3 image offset 
+#define BMP3_IMAGE_OFFSET   54      // BMP3 image offset
+
+#define NAME_LEN            64
 
 /* Pixel structure */
 typedef struct {
