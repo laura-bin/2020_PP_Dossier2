@@ -102,6 +102,9 @@
     \newpage
     \subsection{Pavage d'images}
     \paragraph{}
+    Le pavage d'images est implémenté dans le fichier \emph{mosaic\_filter.c}. Ce filtre utilise la fonction utilitaire \texttt{reduce} qui permet, d'une part, de générer une image réduite contenant les couleurs moyennes des tuiles de l'image filtrée et, d'autre part, de générer l'image réduite qui sera insérée dans la tuile.
+
+    \paragraph{}
     
 
 
@@ -128,6 +131,17 @@
     \subsection{Création d'une image}
     \paragraph{}
     La création d'une nouvelle image est testée par le fichier \emph{test\_create.c}. Ce test vérifie que la fonction de création crée bien une image noire (la matrice de pixels est initialisée à \texttt{0}) aux dimensions demandées. Il crée des images de largeur variables dont le modulo \texttt{4} est égal à \texttt{0}, \texttt{1}, \texttt{2} et \texttt{3} pour vérifier que l'écriture de l'image gère correctement le padding des lignes. Il permet également de tester la fonction de remplissage d'une matrice de pixels avec une couleur donnée.
+
+    \subsection{Réduction d'une image}
+    \paragraph{}
+    La fonction utilitaire de réduction d'une image utilisée pour le filtre de pavage est testée dans les fichiers \emph{test\_reduction.c} et \emph{test\_tile.c} qui testent les deux manières dont la fonction sera utilisée par le filtre. Le fichier \emph{test\_reduction.c} teste égalemetn les cas d'erreurs de la fonction de réduction.
+
+    \paragraph{}
+    Le test de réduction génère une image réduite d'un facteur donné. Chacun de ses pixels est initialisé avec la couleur moyenne de l'ensemble des pixels de l'image source qui sont réduits. Les réductions crées à partir des moyennes de couleurs sont plus lisible (i.e. plus proche de l'image d'origine) que les réductions ne reprenant qu'un pixel sur \texttt{x} de l'image d'origine. Cet effet est particulièrement visible pour le fichier \emph{landscape1.bmp} où les bleus sont atténués mais ne sont pas perdus.
+
+    \paragraph{}
+    Le test de création d'une tuile génère une tuile de taille de donnée et non plus de facteur donné. La tuile à insérer dasn l'image pavée sera toujours carrée. Ce test permet de vérifier le bon fonctionnement des offsets : les tuiles sont bien générées à partir du centre de l'image et pas des bords.
+
 
 
     \subsection{Valgrind}
