@@ -14,64 +14,52 @@
 #include "bmp_file.h"
 #include "utils.h"
 
-#define SUBDIR  "test_create_out"
+#define SOURCE_DIR  "images"                // source directory
+#define DEST_DIR    "test_create_out"       // destination directory
+
+int failures = 0;
+
+void test(char *name, int width, int height, enum color color) {
+    bmp3_image image;
+    char image_name[FILENAME_LEN];
+    int i;
+
+    // test of the creation with widths of which %4 has different values 
+    for (i = 0; i < 4; i++) {
+        puts("");
+
+        // create a unique image name
+        sprintf(image_name, "%s_%d", name, i);
+
+        //create the image
+        if (create_bmp3(&image, image_name, width+i, height)) {
+            failures++;
+            continue;
+        }
+
+        // if the color is not black, fill the image with the given color
+        if (color) {
+            fill_bmp3(&image, WHITE);
+        }
+
+        // write the image
+        if (write_bmp3(&image, DEST_DIR)) {
+            failures++;
+        }
+
+        // display image information
+        puts("");
+        print_bmp3_info(&image);
+        free_bmp3(&image);
+    }
+}
 
 int main (void) {
-    bmp3_image image;
-    int errors = 0;
 
-    make_sub_dir(SUBDIR);
-    
-    puts("");
-    if (create_bmp3(&image, "test_landscape_black_1", 40, 30)) {
-        errors++;
-    }
-    if (write_bmp3(&image, SUBDIR)) {
-        errors++;
-    }
-    print_bmp3_info(&image);
-    free_bmp3(&image);
-    
-    puts("");
-    if (create_bmp3(&image, "test_landscape_black_2", 41, 30)) {
-        errors++;
-    }
-    if (write_bmp3(&image, SUBDIR)) {
-        errors++;
-    }
-    print_bmp3_info(&image);
-    free_bmp3(&image);
-    
-    puts("");
-    if (create_bmp3(&image, "test_landscape_black_3", 42, 30)) {
-        errors++;
-    }
-    if (write_bmp3(&image, SUBDIR)) {
-        errors++;
-    }
-    print_bmp3_info(&image);
-    free_bmp3(&image);
-    
-    puts("");
-    if (create_bmp3(&image, "test_landscape_black_4", 43, 30)) {
-        errors++;
-    }
-    if (write_bmp3(&image, SUBDIR)) {
-        errors++;
-    }
-    print_bmp3_info(&image);
-    free_bmp3(&image);
-    
-    puts("");
-    if (create_bmp3(&image, "test_portrait_white", 30, 40)) {
-        errors++;
-    }
-    fill_bmp3(&image, WHITE);
-    if (write_bmp3(&image, SUBDIR)) {
-        errors++;
-    }
-    print_bmp3_info(&image);
-    free_bmp3(&image);
+    make_sub_dir(DEST_DIR);
 
-    return errors;
+    test("test_landscape_black", 40, 30, BLACK);
+    test("test_portrait_white", 3333, 4444, WHITE);
+
+    return failures;
 }
