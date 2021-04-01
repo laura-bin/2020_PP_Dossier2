@@ -14,58 +14,39 @@
 #include "bmp_file.h"
 #include "utils.h"
 
-int main (void) {
+#define SOURCE_DIR  "images"                // source directory
+#define DEST_DIR    "test_create_out"       // destination directory
+
+int failures = 0;
+
+/**
+ * Tests the bmp file loading function
+ * and diplays the file metadata
+ * 
+ * @param name: name of the file (placed in DEST_DIR directory)
+ */
+void test(char *name) {
     bmp3_image image;
-    int errors = 0;
 
     puts("");
-    if (load_bmp3("detmer", ".." DIR_SEP "images", &image)) {
-        errors++;
+    if (load_bmp3(name, ".." DIR_SEP "images", &image)) {
+        failures++;
     }
-    print_bmp3_info(&image);
-    free_bmp3(&image);
-
     puts("");
-    if (load_bmp3("georgiou", ".." DIR_SEP "images", &image)) {
-        errors++;
-    }
     print_bmp3_info(&image);
     free_bmp3(&image);
+}
 
-    puts("");
-    if (load_bmp3("burnham_spock", ".." DIR_SEP "images", &image)) {
-        errors++;
-    }
-    print_bmp3_info(&image);
-    free_bmp3(&image);
+int main (void) {
 
-    puts("");
-    if (load_bmp3("landscape1", ".." DIR_SEP "images", &image)) {
-        errors++;
-    }
-    print_bmp3_info(&image);
-    free_bmp3(&image);
+    make_sub_dir(DEST_DIR);
 
-    puts("");
-    if (load_bmp3("landscape2", ".." DIR_SEP "images", &image)) {
-        errors++;
-    }
-    print_bmp3_info(&image);
-    free_bmp3(&image);
+    test("detmer");
+    test("georgiou");
+    test("burnham_spock");
+    test("landscape1");
+    test("landscape2");
+    test("landscape3");
 
-    puts("");
-    if (load_bmp3("landscape3", ".." DIR_SEP "images", &image)) {
-        errors++;
-    }
-    print_bmp3_info(&image);
-    free_bmp3(&image);
-
-    puts("");
-    if (load_bmp3("USS_Ent", ".." DIR_SEP "images", &image)) {
-        errors++;
-    }
-    print_bmp3_info(&image);
-    free_bmp3(&image);
-
-    return errors;
+    return failures;
 }
