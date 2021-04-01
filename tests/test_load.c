@@ -19,12 +19,6 @@
 
 int failures = 0;
 
-/**
- * Tests the bmp file loading function
- * and diplays the file metadata
- * 
- * @param name: name of the file (placed in DEST_DIR directory)
- */
 void test(char *name) {
     bmp3_image image;
 
