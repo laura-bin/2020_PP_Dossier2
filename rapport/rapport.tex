@@ -66,11 +66,24 @@
     Ces deux effets sont évidement combinables...
 
 
+
+
     \newpage
     \section{Description du programme}
-    \subsection{Fonctions utilitaires}
+    \subsection{Manipulation des fichiers bitmap}
     \paragraph{}
-    Avant l'implémentation des filtres, il est nécessaire d'implémenter des fonctions utilitaires permettant de manipuler des fichiers bitmap. Ces fonctions sont implémentées dans le fichier \emph{bmp\_file.c}.
+    L'implémentation des filtres demande au préalable d'avoir implémenté des fonctions de lecture (chargement d'une image en mémoire RAM) et d'écriture d'un fichier bitmap. Il est également nécessaire de définir la structure du bitmap manipulé : la matrice de pixels composant l'image et les métadonnées du fichier. Ces structures et fonctions utilitaires sont définies dans le fichier \emph{bmp\_file.h} et implémentées dans le fichier \emph{bmp\_file.c}.
+
+
+    \subsubsection{Métadonnées du fichier bitmap}
+    \paragraph{}
+    Le programme demandé manipule des fichiers BMP3, i.e. 24 bits : chaque pixel y est représenté par un ensemble de 3 bytes correspondant respectivement aux niveaux de rouge, bleu et vert du pixel. L'image est représentée dans le programme par une matrice de ces pixels.
+
+    \paragraph{}
+    Les fichiers BMP3 contiennent en début de fichier un certain nombre de métadonnées sur le fichier et sur l'image : nombre de lignes et de colonnes de l'image, offset de l'image, etc. Ces métadonnées sont documentées dans le fichier \emph{bmp\_file.h}.
+    
+    \paragraph{}
+    La fonction \texttt{print\_bmp3\_info} permet d'afficher les métadonnées d'une image chargée en mémoire. Cette fonction permet de vérifier la conformité des données chargées avec l'image source. Elle permet également de vérifier l'intégrité des données chargées avec celles du fichier bitmap en ouvrant ce fichier dans un éditeur hexadécimal.
 
 
     \subsubsection{Chargement d'un fichier bitmap}
@@ -78,7 +91,7 @@
     La fonction \texttt{load\_bmp3} permet de charger une image bitmap dans la mémoire RAM du programme.
     
     \paragraph{}
-    Cette fonction doit charger en deux temps l'identifiant du fichier (les caractères \texttt{BM}) et le reste des données afin d'éviter un décalage dû au padding ajouté par le compilateur. En effet, le compilateur ajoute de l'espace pour que les champs soient alignées sur quatre bytes, ce qui ne pose de problème pour ce programme que dans le cas de la lecture des informations du fichier.
+    Cette fonction doit charger en deux temps l'identifiant du fichier (les caractères \texttt{BM}) et le reste des données afin d'éviter un décalage dû au padding ajouté par le compilateur. En effet, le compilateur ajoute de l'espace pour que les champs soient alignées sur quatre bytes, ce qui ne pose de problème que dans le cas de la lecture des informations du fichier.
     
     \paragraph{}
     Le chargement de l'image dans la matrice de pixels tient également compte du padding du fichier bitmap : chaque ligne est composée d'un certain nombre de pixels de trois bytes mais la taille de la ligne entière est un multiple de quatre bytes.
@@ -86,9 +99,7 @@
     \paragraph{}
     Dès que l'image n'est plus utilisée, la fonction \texttt{free\_bmp3} doit être appelée pour libérer la mémoire allouée à la matrice de pixels de l'image.
 
-    \subsubsection{Affichage des métadonnées du fichier}
-    \paragraph{}
-    La fonction \texttt{print\_bmp3\_info} permet d'afficher les métadonnées d'une image chargée en mémoire. Cette fonction permet de vérifier la conformité des données chargées avec l'image source. Elle permet également de vérifier l'intégrité des données chargées avec celles du fichier bitmap en ouvrant ce fichier dans un éditeur hexadécimal.
+
 
     \subsubsection{Écriture d'une image}
     \paragraph{}
@@ -96,17 +107,20 @@
 
     \subsubsection{Création d'une image}
     \paragraph{}
-    La fonction \texttt{create\_bmp3} permet de créer une nouvelle image aux dimensions souhaitées. Par défaut, l'image est noire car sa matrice de pixels est initialisée à \texttt{0}. Il est possible de la remplir avec une autre couleur en appelant la fonction \texttt{fill\_bmp3}.
+    La fonction \texttt{create\_bmp3} permet de créer une nouvelle image aux dimensions souhaitées. Par défaut, l'image est noire car sa matrice de pixels est initialisée à \texttt{0}. Il est possible de la remplir avec une autre couleur en appelant la fonction \texttt{fill\_bmp3}. Un certain nombre de couleurs de bases sont définies dans le tableau \texttt{colors}. 
 
 
-    \newpage
+
     \subsection{Pavage d'images}
     \paragraph{}
     Le pavage d'images est implémenté dans le fichier \emph{mosaic\_filter.c}. Ce filtre utilise la fonction utilitaire \texttt{reduce} qui permet, d'une part, de générer une image réduite contenant les couleurs moyennes des tuiles de l'image filtrée et, d'autre part, de générer l'image réduite qui sera insérée dans la tuile.
 
     \paragraph{}
-    
+    Chaque tuile de la mosaïque est crée à partir de l'image réduite en tuile combinée à la couleur moyenne gardée en mémoire dans l'image réduite pour créer un effet de transparence. La proportion de couleur gardée de chacune des deux images est calculée à partir d'un facteur de transparence passé en paramètre à la fonction. Ce facteur varie entre \texttt{0} et \texttt{10} compris : à \texttt{0}, l'image insérée n'est pas du tout transparente et recouvre donc totalement la couleur de la tuile et à \texttt{10} elle est complètement transparente et donc invisible.
 
+    \paragraph{}
+    Cette fonction pourrait encore être améliorée pour pouvoir s'appeler récursivement afin d'ajouter plus d'un niveau d'insertion : la mosaïque pourrait par exemple être composée de tuiles elles-mêmes composées de tuiles contenant l'image d'origine. Cet effet peut être testé en appelant deux fois la fonction de filtre sur une image mais l'image de base est difficilement reconnaissable quand le filtre est appliqué deux fois.
+    
 
     \subsection{Images en donut}
 
@@ -132,15 +146,18 @@
     \paragraph{}
     La création d'une nouvelle image est testée par le fichier \emph{test\_create.c}. Ce test vérifie que la fonction de création crée bien une image noire (la matrice de pixels est initialisée à \texttt{0}) aux dimensions demandées. Il crée des images de largeur variables dont le modulo \texttt{4} est égal à \texttt{0}, \texttt{1}, \texttt{2} et \texttt{3} pour vérifier que l'écriture de l'image gère correctement le padding des lignes. Il permet également de tester la fonction de remplissage d'une matrice de pixels avec une couleur donnée.
 
-    \subsection{Réduction d'une image}
+    \subsection{Filtre de pavage}
     \paragraph{}
-    La fonction utilitaire de réduction d'une image utilisée pour le filtre de pavage est testée dans les fichiers \emph{test\_reduction.c} et \emph{test\_tile.c} qui testent les deux manières dont la fonction sera utilisée par le filtre. Le fichier \emph{test\_reduction.c} teste égalemetn les cas d'erreurs de la fonction de réduction.
+    La fonction utilitaire de réduction d'une image utilisée pour le filtre de pavage est testée dans les fichiers \emph{test\_reduction.c} et \emph{test\_tile.c} qui testent les deux manières dont la fonction sera utilisée par le filtre. Le fichier \emph{test\_reduction.c} teste également les cas d'erreurs de la fonction de réduction.
 
     \paragraph{}
-    Le test de réduction génère une image réduite d'un facteur donné. Chacun de ses pixels est initialisé avec la couleur moyenne de l'ensemble des pixels de l'image source qui sont réduits. Les réductions crées à partir des moyennes de couleurs sont plus lisible (i.e. plus proche de l'image d'origine) que les réductions ne reprenant qu'un pixel sur \texttt{x} de l'image d'origine. Cet effet est particulièrement visible pour le fichier \emph{landscape1.bmp} où les bleus sont atténués mais ne sont pas perdus.
+    Le test de réduction génère une image réduite d'un facteur donné. Chacun de ses pixels est initialisé avec la couleur moyenne de l'ensemble des pixels de l'image source qui y sont réduits. Les réductions créées à partir des moyennes de couleurs sont plus lisible (i.e. plus proche de l'image d'origine) que les réductions ne reprenant qu'un pixel sur \texttt{x} de l'image d'origine. Cet effet est particulièrement visible pour le fichier \emph{landscape1.bmp} où les bleus sont atténués mais ne sont pas perdus.
 
     \paragraph{}
-    Le test de création d'une tuile génère une tuile de taille de donnée et non plus de facteur donné. La tuile à insérer dasn l'image pavée sera toujours carrée. Ce test permet de vérifier le bon fonctionnement des offsets : les tuiles sont bien générées à partir du centre de l'image et pas des bords.
+    Le test de création d'une tuile génère une tuile de taille de donnée et non plus de facteur de réduction donné. La tuile à insérer dans l'image pavée sera toujours carrée. Ce test permet de vérifier le bon fonctionnement des offsets : les tuiles sont bien générées à partir du centre de l'image et pas des bords.
+
+    \paragraph{}
+    Le filtre de pavage en tant que tel est testé par le fichier \emph{test\_mosaic.c}. La création de la mosaïque est testée avec différentes tailles de tuiles et différentes transparences. Le dernier test réapplique le filtre de pavage à une image déjà passée par le filtre.
 
 
 
@@ -155,6 +172,8 @@
 
     \newpage
     \section{Problèmes rencontrés}
+    \paragraph{}
+    Format BMP3 et padding
 
     
 \end{document}

@@ -8,6 +8,8 @@
  * PP 2020-2021 - Laura Binacchi - Fedora 32
  ****************************************************************************************/
 
+#define TRANSP_SCALE    10      // transparency scale
+
 /**
  * Reduces a BMP3 image: this function is used in the mosaic creation
  * to compute the colors of the tiles and to generate the tile image
@@ -23,3 +25,5 @@
  *     -1 if a parameter is invalid or if an error occured
  */
 int reduce(bmp3_image *source, bmp3_image *dest, int dest_width, int dest_height, int factor);
+
+int create_mosaic(bmp3_image *source, bmp3_image *dest, int tile_size, int transparency);
