@@ -22,7 +22,6 @@ int failures = 0;
 void test(char *source_name, int *tests, int n) {
     bmp3_image source;              // source image
     bmp3_image dest;                // destination image
-    char dest_name[FILENAME_LEN];   // destination name
     int factor;                     // reduction factor
     int rv = 0;                     // return value
     int i;
@@ -37,7 +36,7 @@ void test(char *source_name, int *tests, int n) {
 
     for (i = 0; i < n; i++) {
         // set the destination name
-        sprintf(dest_name, "%s_tile_%u", source_name, tests[i]);
+        sprintf(dest.name, "%s_tile_%d", source_name, tests[i]);
         factor = 0;
 
         // create the reduced image
@@ -49,7 +48,7 @@ void test(char *source_name, int *tests, int n) {
             }
         }
 
-        rv = reduce(&source, &dest, dest_name, tests[i], tests[i], factor);
+        rv = reduce(&source, &dest, tests[i], tests[i], factor);
 
         if (rv) {
             failures++;

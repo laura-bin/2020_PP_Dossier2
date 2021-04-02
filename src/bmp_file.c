@@ -210,10 +210,10 @@ int write_bmp3(bmp3_image *image, char *dir) {
     return 0;
 }
 
-int create_bmp3(bmp3_image *out_image, char *name, int width, int height) {
+int create_bmp3(bmp3_image *out_image, int width, int height) {
     int i;
 
-    printf("creating %s... ", name);
+    printf("creating %s... ", out_image->name);
 
     // initialize the file information
     memset(&out_image->file_info, 0, sizeof(bmp_file_info));
@@ -233,9 +233,6 @@ int create_bmp3(bmp3_image *out_image, char *name, int width, int height) {
 
     // set the number of pixels
     out_image->pixel_count = width * height;
-
-    // set the name
-    strcpy(out_image->name, name);
 
     // set the pixel matrix
     alloc_pixel_matrix(out_image);

@@ -22,7 +22,6 @@ int failures = 0;
 void test(char *source_name, int *tests, int n) {
     bmp3_image source;              // source image
     bmp3_image dest;                // destination image
-    char dest_name[FILENAME_LEN];   // destination name
     int dest_width;                 // destination image width
     int dest_height;                // destination image height
     int rv = 0;                     // return value
@@ -38,7 +37,7 @@ void test(char *source_name, int *tests, int n) {
 
     for (i = 0; i < n; i++) {
         // set the destination name
-        sprintf(dest_name, "%s_reduction_%u", source_name, tests[i]);
+        sprintf(dest.name, "%s_reduction_%d", source_name, tests[i]);
 
         // create the reduced image
         if (!tests[i]) {
@@ -48,7 +47,7 @@ void test(char *source_name, int *tests, int n) {
             dest_width = source.header.width/tests[i];
             dest_height = source.header.height/tests[i];
         }
-        rv = reduce(&source, &dest, dest_name, dest_width, dest_height, tests[i]);
+        rv = reduce(&source, &dest, dest_width, dest_height, tests[i]);
 
         if (rv) {
             failures++;
@@ -72,11 +71,11 @@ int main (void) {
     sprintf(dummy.name, "error");
     dummy.header.width = 1000;
     dummy.header.height = 100;
-    reduce(&dummy, &dummy, "", 0, 0, 0);
-    reduce(&dummy, &dummy, "", 200, 0, 0);
-    reduce(&dummy, &dummy, "", 200, 200, 0);
-    reduce(&dummy, &dummy, "", 200, 200, 2);
-    reduce(&dummy, &dummy, "", 200, 200, 20);
+    reduce(&dummy, &dummy, 0, 0, 0);
+    reduce(&dummy, &dummy, 200, 0, 0);
+    reduce(&dummy, &dummy, 200, 200, 0);
+    reduce(&dummy, &dummy, 200, 200, 2);
+    reduce(&dummy, &dummy, 200, 200, 20);
 
     // test the reduction with the reduction factor
     test("burnham_spock", (int[]){ -10, 0, 2, 10, 20, 30, 40, 50, 100, 500, 903, 1000 }, 12);

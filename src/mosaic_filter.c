@@ -12,8 +12,7 @@
 #include "bmp_file.h"
 #include "mosaic_filter.h"
 
-int reduce(bmp3_image *source, bmp3_image *dest, char *dest_name,
-            int dest_width, int dest_height, int factor) {
+int reduce(bmp3_image *source, bmp3_image *dest, int dest_width, int dest_height, int factor) {
 
     int dest_row, dest_col;     // destination image row and column indexes
     int source_row, source_col; // source image row and column indexes
@@ -47,7 +46,7 @@ int reduce(bmp3_image *source, bmp3_image *dest, char *dest_name,
     offset_col = (source->header.width - dest_width*factor) / 2;
 
     // create the new image
-    if (create_bmp3(dest, dest_name, dest_width, dest_height)) {
+    if (create_bmp3(dest, dest_width, dest_height)) {
         return -1;
     }
 

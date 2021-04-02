@@ -60,7 +60,7 @@ typedef struct {
 typedef struct {
     bmp_file_info file_info;    // file information
     bmp3_header header;         // file header
-    char name[64];              // file name without extension
+    char name[FILENAME_LEN];    // file name without extension
     pixel **matrix;             // pixel matrix
     unsigned pixel_count;       // number of pixel in the matrix
 } bmp3_image;
@@ -116,7 +116,6 @@ int write_bmp3(bmp3_image *image, char *dir);
  * Creates a new BMP3 image: pixels are set to 0 (black)
  * 
  * @param out_image: image to create
- * @param name: image name
  * @param width: image width
  * @param height: image height
  * 
@@ -124,7 +123,7 @@ int write_bmp3(bmp3_image *image, char *dir);
  *      0 if the image has successfully been created
  *     -1 if an error occured
  */
-int create_bmp3(bmp3_image *out_image, char *name, int width, int height);
+int create_bmp3(bmp3_image *out_image, int width, int height);
 
 /**
  * Fills the pixel matrix with a given color

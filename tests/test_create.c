@@ -29,10 +29,10 @@ void test(char *name, int width, int height, enum color color) {
         puts("");
 
         // create a unique image name
-        sprintf(image_name, "%s_%d", name, i);
+        sprintf(image.name, "%s_%d", name, i);
 
         //create the image
-        if (create_bmp3(&image, image_name, width+i, height)) {
+        if (create_bmp3(&image, width+i, height)) {
             failures++;
             continue;
         }
