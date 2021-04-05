@@ -1,6 +1,9 @@
 
 build/
 
+*.zip
+
 rapport/*
 !rapport/*.tex
 !rapport/*.pdf
+!rapport/*.png
