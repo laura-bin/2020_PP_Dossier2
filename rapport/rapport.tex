@@ -49,7 +49,7 @@
 
     \section{Cahier des charges}
     \paragraph{}
-    On demande d’écrire un programme en C qui permet de générer une série de fichiers image au format .bmp 24 bits. Ces images seront  obtenues par application de filtres décrits ci-dessous à des images existantes. Le programme fonctionnera en 2D, le but de l’exercice n’est pas artistique mais bien de concevoir et implémenter des effets graphiques faisant appel à plusieurs images. Le programme sera décomposé en blocs fonctionnels cohérents,fera appel à l’allocation dynamique des matrices utilisées et sera écrit de manière lisible et bien documentée. Il utilisera au maximum les notions de programmation vues au cours, spécialement les structures, les fichiers binaires,les boucles imbriquées complexes à indices multiples et variables.
+    On demande d’écrire un programme en C qui permet de générer une série de fichiers image au format .bmp 24 bits. Ces images seront  obtenues par application de filtres décrits ci-dessous à des images existantes. Le programme fonctionnera en 2D, le but de l’exercice n’est pas artistique mais bien de concevoir et implémenter des effets graphiques faisant appel à plusieurs images. Le programme sera décomposé en blocs fonctionnels cohérents, fera appel à l’allocation dynamique des matrices utilisées et sera écrit de manière lisible et bien documentée. Il utilisera au maximum les notions de programmation vues au cours, spécialement les structures, les fichiers binaires, les boucles imbriquées complexes à indices multiples et variables.
 
     \paragraph{}
     Ce programme sera purement «batch», aucune interactivité n’est demandée. Le programme principal appellera un ensemble de routines de tests générant les images demandées, mais aussi testant de manière systématique les fonctions primitives nécessaires.
@@ -77,10 +77,10 @@
 
     \subsubsection{Métadonnées du fichier bitmap}
     \paragraph{}
-    Le programme demandé manipule des fichiers BMP3, i.e. 24 bits : chaque pixel y est représenté par un ensemble de 3 bytes correspondant respectivement aux niveaux de rouge, bleu et vert du pixel. L'image est représentée dans le programme par une matrice de ces pixels.
+    Le programme demandé manipule des fichiers BMP3, i.e. 24 bits : chaque pixel y est représenté par un ensemble de 3 bytes correspondant respectivement aux niveaux de rouge, bleu et vert du pixel. L'image est représentée par une matrice de ces pixels.
 
     \paragraph{}
-    Les fichiers BMP3 contiennent en début de fichier un certain nombre de métadonnées sur le fichier et sur l'image : nombre de lignes et de colonnes de l'image, offset de l'image, etc. Ces métadonnées sont documentées dans le fichier \emph{bmp\_file.h}.
+    Les fichiers BMP3 contiennent en début de fichier un certain nombre de métadonnées sur le fichier et sur l'image : nombre de lignes et de colonnes de l'image, offset de l'image, etc. La structure de ces métadonnées, définie par la structure \texttt{BITMAPINFOHEADER} de la documentation \emph{Windows} pour la version 3 de la norme \emph{bitmap}, est documentée dans le fichier \emph{bmp\_file.h}.
     
     \paragraph{}
     La fonction \texttt{print\_bmp3\_info} permet d'afficher les métadonnées d'une image chargée en mémoire. Cette fonction permet de vérifier la conformité des données chargées avec l'image source. Elle permet également de vérifier l'intégrité des données chargées avec celles du fichier bitmap en ouvrant ce fichier dans un éditeur hexadécimal.
@@ -123,7 +123,14 @@
     
 
     \subsection{Images en donut}
+    \paragraph{}
+    Le filtre donut est implémenté dans le fichier \emph{donut\_filter.c}. Il permet de transformer un fichier BMP3 chargé en mémoire en un donut de rayon intérieur donné (en pixels) et d'étendue donnée (en pourcentage).
 
+    \paragraph{}
+    La taille de l'image "donut" est définie par rapport à l'espace occupé par le donut produit par le filtre selon les paramètres donnés, i.e. si la portion de donut est plus petite qu'un donut complet, les bords sont coupés.
+
+    \paragraph{}
+    La correspondance entre les pixels du donut et les pixels de l'image d'origine est établie selon les formules trigonométriques fournies au cours. Ces calculs de correspondance peuvent produire des erreurs d'arrondis qui font qu'il manque certains pixels sur les bords de l'image. L'implémentation du filtre donut corrige les arrondis pour que le bord extérieur du donut soit bien présent, ce qui peut générer des erreurs d'un ou deux pixels dans le calcul du rayon interne.
 
 
 
@@ -146,6 +153,7 @@
     \paragraph{}
     La création d'une nouvelle image est testée par le fichier \emph{test\_create.c}. Ce test vérifie que la fonction de création crée bien une image noire (la matrice de pixels est initialisée à \texttt{0}) aux dimensions demandées. Il crée des images de largeur variables dont le modulo \texttt{4} est égal à \texttt{0}, \texttt{1}, \texttt{2} et \texttt{3} pour vérifier que l'écriture de l'image gère correctement le padding des lignes. Il permet également de tester la fonction de remplissage d'une matrice de pixels avec une couleur donnée.
 
+
     \subsection{Filtre de pavage}
     \paragraph{}
     La fonction utilitaire de réduction d'une image utilisée pour le filtre de pavage est testée dans les fichiers \emph{test\_reduction.c} et \emph{test\_tile.c} qui testent les deux manières dont la fonction sera utilisée par le filtre. Le fichier \emph{test\_reduction.c} teste également les cas d'erreurs de la fonction de réduction.
@@ -158,6 +166,14 @@
 
     \paragraph{}
     Le filtre de pavage en tant que tel est testé par le fichier \emph{test\_mosaic.c}. La création de la mosaïque est testée avec différentes tailles de tuiles et différentes transparences. Le dernier test réapplique le filtre de pavage à une image déjà passée par le filtre.
+
+
+    \subsection{Filtre donut}
+    \paragraph{}
+    Le filtre donut est testé par le fichier \emph{test\_donut.c}. Il teste la génération de donuts de différentes étendues et de différents rayons internes. Les images sont produites avec un fond qui contraste bien avec l'image d'origine pour distinguer clairement le donut généré par le filtre. Les images choisies permettent de voir l'effet de distorsion du filtre sur les lignes.
+
+    \paragraph{}
+    Ce fichier teste également les cas d'erreurs de la fonction de filtre.
 
 
 
@@ -173,7 +189,18 @@
     \newpage
     \section{Problèmes rencontrés}
     \paragraph{}
-    Format BMP3 et padding
+    La première difficulté de ce travail concerne le format du fichier bitmap3, en particulier le padding des lignes de la matrice de pixels. En cherchant des informations sur la norme bitmap je n'avais d'abord pas vu ce padding et le fait de ne pas l'avoir pris en compte s'est révélé dans les tests de copie d'images. J'aurais pu reprendre les fonctions fournies mais les réimplémenter m'a permis de bien comprendre la structure des fichiers bitmap.
 
+    \paragraph{}
+    Sur base de fonctions utilitaires correctement implémentées, je n'ai pas rencontré de difficulté particulière pour l'implémentation du filtre de pavage. J'ai procédé étape par étape en ajoutant petit à petit des paramètres et des fonctionnalités supplémentaires.
+
+    \paragraph{}
+    Pour le filtre donut, régler les problèmes d'arrondis a été la plus grande difficulté. Il a fallu trouver où corriger les arrondis et où les imprécisions de calcul étaient plus ou moins gênantes pour le rendu final. J'ai privilégié de ne pas perdre le bord extérieur de l'image en perdant parfois un peu de précision sur le calcul du rayon interne. L'implémentation du filtre est également plus précise sur les images dont l'étendue et supérieure à 50\%.
+
+    \paragraph{}
+    Le programme est bien entendu toujours améliorable. J'aurais par exemple pu implémenter le facteur de réduction d'image de la fonction de réduction d'image et le facteur de transparence du filtre de pavage sous forme de pourcentage comme je l'ai fait pour l'étendue du donut.
+
+    \paragraph{}
+    J'aurais également pu rendre les filtres plus généraux en les rendant indépendants du type d'image filtrée. Dans ce programme, les filtres s'appliquent spécifiquement à des images bitmap3. C'est bien ce qui est demandé par le cahier des charges mais cela nécessitera un travail supplémentaire pour adapter ces fonctions à un autre type d'image.
     
 \end{document}
