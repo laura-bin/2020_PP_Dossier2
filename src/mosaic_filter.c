@@ -32,11 +32,11 @@ int reduce(bmp3_image *source, bmp3_image *dest, int dest_width, int dest_height
         return -1;
     }
     if (dest_width*factor > source->header.width) {
-        printf("reducing %s: factor * destination width > source width\n", source->name);
+        printf("reducing %s: factor * destination width must be > source width\n", source->name);
         return -1;
     }
     if (dest_height*factor > source->header.height) {
-        printf("reducing %s: factor * destination height > source height\n", source->name);
+        printf("reducing %s: factor * destination height must be > source height\n", source->name);
         return -1;
     }
 
@@ -113,7 +113,6 @@ int create_mosaic(bmp3_image *source, bmp3_image *dest, int tile_size, int trans
         return -1;
     }
 
-
     // initialize the mosaic
     if (create_bmp3(dest, miniature.header.width*tile_size, miniature.header.height*tile_size)) {
         return -1;
@@ -123,12 +122,14 @@ int create_mosaic(bmp3_image *source, bmp3_image *dest, int tile_size, int trans
     // for each pixel of the miniaturized image
     for (mini_row = 0; mini_row < miniature.header.height; mini_row++) {
         for (mini_col = 0; mini_col < miniature.header.width; mini_col++) {
+
             // expand the pixel to the tile size in the mosaic
             for (tile_row = 0; tile_row < tile_size; tile_row++) {
                 for (tile_col = 0; tile_col < tile_size; tile_col++) {
                     dest_row = tile_row + mini_row * tile_size;
                     dest_col = tile_col + mini_col * tile_size;
 
+                    // and set the pixel color combining the average color and the tile pixel
                     dest->matrix[dest_row][dest_col].R =
                         tile.matrix[tile_row][tile_col].R * (TRANSP_SCALE - transparency) / TRANSP_SCALE
                         + miniature.matrix[mini_row][mini_col].R * transparency / TRANSP_SCALE;
