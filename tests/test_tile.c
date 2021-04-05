@@ -17,46 +17,51 @@
 #define SOURCE_DIR  "images"                // source directory
 #define DEST_DIR    "test_tile_out"         // destination directory
 
+#define N_TILE_SIZE     12                  // number of tile size values tests
+
+int tile_sizes[N_TILE_SIZE] = { 1, 2, 10, 20, 30, 40, 50, 75, 100, 500, 800, 1000 };
+
 int failures = 0;
 
-void test(char *source_name, int *tests, int n) {
+void test(char *source_name) {
     bmp3_image source;              // source image
     bmp3_image dest;                // destination image
     int factor;                     // reduction factor
-    int rv = 0;                     // return value
     int i;
 
     puts("");
 
     // load the source image from the source directory
     if (load_bmp3(source_name, ".." DIR_SEP SOURCE_DIR, &source)) {
-        failures += n;
+        failures += N_TILE_SIZE;
         return;
     }
 
-    for (i = 0; i < n; i++) {
+    for (i = 0; i < N_TILE_SIZE; i++) {
         // set the destination name
-        sprintf(dest.name, "%s_tile_%d", source_name, tests[i]);
-        factor = 0;
+        sprintf(dest.name, "%s_tile_%d", source_name, tile_sizes[i]);
 
-        // create the reduced image
-        if (tests[i]) {
+        // compute the reduction factor
+        factor = 0;
+        if (tile_sizes[i]) {
             if (source.header.width > source.header.height) {
-                factor = source.header.height / tests[i];
+                factor = source.header.height / tile_sizes[i];
             } else {
-                factor = source.header.width / tests[i];
+                factor = source.header.width / tile_sizes[i];
             }
         }
 
-        rv = reduce(&source, &dest, tests[i], tests[i], factor);
-
-        if (rv) {
+        // create the tile
+        if (reduce(&source, &dest, tile_sizes[i], tile_sizes[i], factor)) {
             failures++;
             continue;
         }
 
         // write the new image
-        rv = write_bmp3(&dest, DEST_DIR);
+        if (write_bmp3(&dest, DEST_DIR)) {
+            failures++;
+        }
+
         free_bmp3(&dest);
     }
     
@@ -67,9 +72,9 @@ int main (void) {
 
     make_sub_dir(DEST_DIR);
 
-    // test the file creation with the tile size
-    test("burnham_spock", (int[]){ -10, 0, 2, 10, 20, 30, 40, 50, 100, 500, 900, 10000 }, 12);
-    test("landscape1", (int[]){ -10, 0, 2, 10, 20, 30, 40, 50, 100, 500, 900, 10000 }, 12);
+    // test the file creation with different tile sizes
+    test("burnham_spock");
+    test("landscape1");
 
     return failures;
 }
