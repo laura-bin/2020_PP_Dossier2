@@ -17,50 +17,74 @@
 #define SOURCE_DIR  "images"                // source directory
 #define DEST_DIR    "test_mosaic_out"       // destination directory
 
+#define N_TRANSPARENCY  4                   // number of transparency values tested
+#define N_TILE_SIZE1    4                   // number of tile size values tested
+#define N_TILE_SIZE2    1                   // number of tile size values tested
+
+int transparencies[N_TRANSPARENCY] = { 2, 4, 6, 8 };
+int tile_sizes1[N_TILE_SIZE1] = { 10, 30, 50, 100 };
+int tile_sizes2[N_TILE_SIZE2] = { 50 };
+
 int failures = 0;
 
-void test(char *source_name, int *tests, int n) {
+void test(char *source_name, int *tile_sizes, int n_tile_size) {
     bmp3_image source;              // source image
     bmp3_image dest;                // destination image
-    int rv = 0;                     // return value
-    int i;
+    int transparency, tile_size;    // transparency and tile size indexes
 
     puts("");
 
     // load the source image from the source directory
     if (load_bmp3(source_name, ".." DIR_SEP SOURCE_DIR, &source)) {
-        failures += n;
+        failures += n_tile_size * N_TRANSPARENCY;
         return;
     }
 
-    for (i = 0; i < n; i++) {
-        // set the destination name
-        sprintf(dest.name, "%s_mosaic_%d_%d", source_name, tests[i], i);
+    for (tile_size = 0; tile_size < n_tile_size; tile_size++) {
+        for (transparency = 0; transparency < N_TRANSPARENCY; transparency++) {
+            // set the mosaic name
+            sprintf(dest.name, "%s_mosaic_%d_%d", source_name, tile_sizes[tile_size], transparencies[transparency]);
 
-        rv = create_mosaic(&source, &dest, tests[i], i);
+            // create the mosaic
+            if (create_mosaic(&source, &dest, tile_sizes[tile_size], transparencies[transparency])) {
+                failures++;
+                continue;
+            }
 
-        if (rv) {
-            failures++;
-            continue;
+            // write the mosaic
+            if (write_bmp3(&dest, DEST_DIR)) {
+                failures++;
+            }
+
+
+            free_bmp3(&dest);
         }
-
-        // write the new image
-        rv = write_bmp3(&dest, DEST_DIR);
-        free_bmp3(&dest);
     }
     
     free_bmp3(&source);
 }
 
 int main (void) {
+    bmp3_image dummy;
 
     make_sub_dir(DEST_DIR);
 
-    // test the mosaic creation with different tile sizes
-    test("detmer", (int[]){ -10, 0, 2, 10, 20, 30, 40, 50, 100, 500, 900, 10000 }, 12);
-    test("landscape3", (int[]){ 1000, 500, 200, 100, 50, 40, 30, 25, 20, 15, 10, 5 }, 12);
-    test("georgiou", (int[]){ 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20 }, 11);
-    test("georgiou_mosaic_100_8", (int[]){ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50 }, 11);
+    // test the error values (don't count them in the failures count)
+    sprintf(dummy.name, "error");
+    dummy.header.width = 1920;
+    dummy.header.height = 1080;
+    create_mosaic(&dummy, &dummy, -10, 0);  // invalid tile size
+    create_mosaic(&dummy, &dummy, 0, 0);    // invalid tile size
+    create_mosaic(&dummy, &dummy, 10, -10); // invalid transparency
+    create_mosaic(&dummy, &dummy, 10, 20);  // invalid transparency
 
+    make_sub_dir(DEST_DIR);
+
+    // test the mosaic creation with different tile sizes and transparencies
+    test("detmer", tile_sizes1, N_TILE_SIZE1);
+    test("landscape2", tile_sizes1, N_TILE_SIZE1);
+    test("georgiou_mosaic_100_8", tile_sizes2, N_TILE_SIZE2);
+
+    printf("\nerrors: %d\n", failures);
     return failures;
 }
