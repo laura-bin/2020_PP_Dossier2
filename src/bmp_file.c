@@ -290,7 +290,11 @@ int create_bmp3(bmp3_image *out_image, int width, int height) {
     out_image->pixel_count = width * height;
 
     // set the pixel matrix
-    alloc_pixel_matrix(out_image);
+    if (alloc_pixel_matrix(out_image)) {
+        printf("error on pixel matrix memory allocation (%s)\n", strerror(errno));
+        return -1;
+    }
+    
     for (i = 0; i < out_image->header.height; i++) {
         memset(out_image->matrix[i], 0, 3 * out_image->header.width);
     }
