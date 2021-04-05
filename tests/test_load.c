@@ -40,7 +40,6 @@ int main (void) {
     test("burnham_spock");
     test("landscape1");
     test("landscape2");
-    test("landscape3");
 
     return failures;
 }

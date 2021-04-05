@@ -36,6 +36,7 @@ void test(char *tested) {
     if (write_bmp3(&source, DEST_DIR)) {
         failures++;
     }
+
     free_bmp3(&source);
 }
 
@@ -48,7 +49,6 @@ int main (void) {
     test("burnham_spock");
     test("landscape1");
     test("landscape2");
-    test("landscape3");
 
     return failures;
 }
