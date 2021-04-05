@@ -76,5 +76,6 @@ int main (void) {
     test("burnham_spock");
     test("landscape1");
 
+    printf("\nerrors: %d\n", failures);
     return failures;
 }
