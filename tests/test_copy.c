@@ -44,6 +44,7 @@ int main (void) {
 
     make_sub_dir(DEST_DIR);
 
+    test("error");
     test("detmer");
     test("georgiou");
     test("burnham_spock");
