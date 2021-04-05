@@ -8,10 +8,12 @@
  * PP 2020-2021 - Laura Binacchi - Fedora 32
  ****************************************************************************************/
 
+#include "bmp_file.h"
+
 #define TRANSP_SCALE    10      // transparency scale
 
 /**
- * Reduces a BMP3 image: this function is used in the mosaic creation
+ * Reduces a BMP3 image: this function is used in the mosaic creation 
  * to compute the colors of the tiles and to generate the tile image
  * 
  * @param source: source image to reduce

@@ -9,7 +9,6 @@
 
 #include <stdio.h>
 
-#include "bmp_file.h"
 #include "mosaic_filter.h"
 
 int reduce(bmp3_image *source, bmp3_image *dest, int dest_width, int dest_height, int factor) {

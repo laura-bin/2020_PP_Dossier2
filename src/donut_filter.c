@@ -10,7 +10,6 @@
 #include <math.h>
 #include <stdio.h>
 
-#include "bmp_file.h"
 #include "donut_filter.h"
 
 int create_donut(bmp3_image *source, bmp3_image *dest, int radius, double spread, enum color background) {
@@ -76,7 +75,7 @@ int create_donut(bmp3_image *source, bmp3_image *dest, int radius, double spread
                 source_col = atan2(y, x) * ((double)source->header.width - 1.0) / 2.0 / M_PI / spread
                                 + (double)source->header.width / 2.0;
                 
-                // and if the coorespondit pixel in the source image is valid
+                // and if the corresponding pixel in the source image is valid
                 if (source_row > 0 && source_row < source->header.height
                     && source_col >= 0 && source_col < source->header.width) {
                     dest->matrix[row][col] = source->matrix[source_row][source_col];
