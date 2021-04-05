@@ -73,7 +73,7 @@ int main (void) {
 
     make_sub_dir(DEST_DIR);
 
-    // test the error values
+    // test the error values (don't count them in the failures count)
     sprintf(dummy.name, "error");
     dummy.header.width = 1000;
     dummy.header.height = 100;
@@ -87,5 +87,6 @@ int main (void) {
     test("burnham_spock");
     test("landscape1");
 
+    printf("\nerrors: %d\n", failures);
     return failures;
 }
