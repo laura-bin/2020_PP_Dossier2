@@ -59,7 +59,7 @@ int main (void) {
     make_sub_dir(DEST_DIR);
 
     test("test_landscape_black", 40, 30, BLACK);
-    test("test_portrait_white", 3333, 4444, CYAN1);
+    test("test_portrait_white", 3333, 4444, WHITE);
 
     return failures;
 }
