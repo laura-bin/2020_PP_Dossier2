@@ -17,43 +17,42 @@
 #define SOURCE_DIR  "images"                // source directory
 #define DEST_DIR    "test_reduction_out"    // destination directory
 
-#define N_TILE_SIZE     12                  // number of tile size values tested
+#define N_FACTOR        12                  // number of reduction factor values tested
 
-int tile_sizes[N_TILE_SIZE] = { 1, 2, 10, 20, 30, 40, 50, 100, 500, 800, 900, 1000 };
+int reduction_factors[N_FACTOR] = { 1, 2, 10, 20, 30, 40, 50, 100, 500, 800, 900, 1000 };
 
 int failures = 0;
 
-void test(char *source_name, int *tests, int n) {
+void test(char *source_name) {
     bmp3_image source;              // source image
     bmp3_image dest;                // destination image
     int dest_width;                 // destination image width
     int dest_height;                // destination image height
-    int rv = 0;                     // return value
     int i;
 
     puts("");
 
     // load the source image from the source directory
     if (load_bmp3(source_name, ".." DIR_SEP SOURCE_DIR, &source)) {
-        failures += n;
+        failures += N_FACTOR;
         return;
     }
 
-    for (i = 0; i < N_TILE_SIZE; i++) {
+    for (i = 0; i < N_FACTOR; i++) {
         // set the destination name
-        sprintf(dest.name, "%s_reduction_%d", source_name, tile_sizes[i]);
+        sprintf(dest.name, "%s_reduction_%d", source_name, reduction_factors[i]);
 
         // create the reduced image
-        if (!tile_sizes[i]) {
+        if (!reduction_factors[i]) {
             dest_width = 0;
             dest_height = 0;
         } else {
-            dest_width = source.header.width/tile_sizes[i];
-            dest_height = source.header.height/tile_sizes[i];
+            dest_width = source.header.width/reduction_factors[i];
+            dest_height = source.header.height/reduction_factors[i];
         }
 
         // reduce the image
-        if (reduce(&source, &dest, dest_width, dest_height, tile_sizes[i])) {
+        if (reduce(&source, &dest, dest_width, dest_height, reduction_factors[i])) {
             failures++;
             continue;
         }
@@ -85,8 +84,8 @@ int main (void) {
     reduce(&dummy, &dummy, 200, 200, 20);   // source width is not < factor * destination width
 
     // test the reduction with different reduction factor
-    test("burnham_spock", (int[]){ -10, 0, 2, 10, 20, 30, 40, 50, 100, 500, 903, 1000 }, 12);
-    test("landscape1", (int[]){ -10, 0, 2, 10, 20, 30, 40, 50, 100, 500, 980, 1000 }, 12);
+    test("burnham_spock");
+    test("landscape1");
 
     return failures;
 }
