@@ -51,5 +51,6 @@ int main (void) {
     test("landscape1");
     test("landscape2");
 
+    printf("\nerrors: %d\n", failures);
     return failures;
 }
