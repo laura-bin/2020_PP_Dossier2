@@ -56,7 +56,6 @@ void test(char *source_name, int *tile_sizes, int n_tile_size) {
                 failures++;
             }
 
-
             free_bmp3(&dest);
         }
     }
