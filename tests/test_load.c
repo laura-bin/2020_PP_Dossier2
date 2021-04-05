@@ -25,6 +25,7 @@ void test(char *name) {
     puts("");
     if (load_bmp3(name, ".." DIR_SEP "images", &image)) {
         failures++;
+        return;
     }
     puts("");
     print_bmp3_info(&image);
@@ -35,6 +36,7 @@ int main (void) {
 
     make_sub_dir(DEST_DIR);
 
+    test("error");
     test("detmer");
     test("georgiou");
     test("burnham_spock");
