@@ -24,7 +24,7 @@ void test(char *name, int width, int height, enum color color) {
     char image_name[FILENAME_LEN];
     int i;
 
-    // test of the creation with widths of which %4 has different values 
+    // test the creation with widths of which %4 has different values 
     for (i = 0; i < 4; i++) {
         puts("");
 
@@ -61,5 +61,6 @@ int main (void) {
     test("test_landscape_black", 40, 30, BLACK);
     test("test_portrait_white", 3333, 4444, WHITE);
 
+    printf("\nerrors: %d\n", failures);
     return failures;
 }
